@@ -3,6 +3,8 @@ import React from "react";
 import { HighlightCard } from "../../components/HighlightCard";
 import { TransactionCard } from "../../components/TransactionCard";
 
+import { DataListProps } from "./interfaces";
+
 import {
 	Container,
 	Header,
@@ -16,9 +18,38 @@ import {
 	HighlightCards,
 	Transactions,
 	Title,
+	TransactionsList,
 } from "./styles";
 
 export const Dashboard = () => {
+	const data: DataListProps[] = [
+		{
+			id: "1",
+			type: "positive",
+			title: "Desenvolvimento",
+			amount: "ECV 4.000,00",
+			category: { name: "Venda", icon: "dollar-sign" },
+			date: "23/01/2022",
+		},
+
+		{
+			id: "2",
+			type: "negative",
+			title: "Desenvolvimento",
+			amount: "ECV 4.000,00",
+			category: { name: "Alimentacao", icon: "coffee" },
+			date: "23/01/2022",
+		},
+		{
+			id: "3",
+			type: "negative",
+			title: "Desenvolvimento",
+			amount: "ECV 4.000,00",
+			category: { name: "Casa", icon: "home" },
+			date: "23/01/2022",
+		},
+	];
+
 	return (
 		<Container>
 			<Header>
@@ -62,7 +93,11 @@ export const Dashboard = () => {
 			<Transactions>
 				<Title>Listagem</Title>
 
-				<TransactionCard></TransactionCard>
+				<TransactionsList
+					data={data}
+					keyExtractor={(item) => item.id}
+					renderItem={({ item }) => <TransactionCard data={item} />}
+				/>
 			</Transactions>
 		</Container>
 	);

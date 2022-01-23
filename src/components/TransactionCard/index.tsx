@@ -1,5 +1,7 @@
 import React from "react";
 
+import { TransactionCardProps } from "./interfaces";
+
 import {
 	Amount,
 	Category,
@@ -11,17 +13,20 @@ import {
 	Title,
 } from "./styles";
 
-export const TransactionCard = () => {
+export const TransactionCard = ({ data }: TransactionCardProps) => {
 	return (
 		<Container>
-			<Title>Desenvolvimento</Title>
-			<Amount>ECV 4000,00</Amount>
+			<Title>{data.title}</Title>
+			<Amount type={data.type}>
+				{data.type === "negative" && "- "}
+				{data.amount}
+			</Amount>
 			<Footer>
 				<Category>
-					<Icon name="dollar-sign"></Icon>
-					<CategoryName>Vendas</CategoryName>
+					<Icon name={data.category.icon}></Icon>
+					<CategoryName>{data.category.name}</CategoryName>
 				</Category>
-				<Date>23 / 01 / 2022</Date>
+				<Date>{data.date}</Date>
 			</Footer>
 		</Container>
 	);
