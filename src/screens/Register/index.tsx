@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Modal } from "react-native";
+import { Alert, Keyboard, Modal, TouchableWithoutFeedback } from "react-native";
 import { useForm } from "react-hook-form";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import { Button } from "../../components/Forms/Button";
 import { ControlledInput } from "../../components/Forms/ControlledInput";
@@ -18,6 +20,14 @@ import {
 	TransactionsType,
 } from "./styles";
 
+const schema = Yup.object().shape({
+	name: Yup.string().required("Nome obrigatorio"),
+	amount: Yup.number()
+		.typeError("Informe valor numerico")
+		.positive("O valor nao pode ser negativo")
+		.required("Valor obrigatorio"),
+});
+
 export const Register = () => {
 	const [category, setCategory] = useState<CategoryProps>({
 		key: "category",
@@ -26,7 +36,13 @@ export const Register = () => {
 	const [transactionType, setTransactionType] = useState("");
 	const [categoryModalOpen, setCategoryModalOpen] = useState(false);
 
-	const { control, handleSubmit } = useForm();
+	const {
+		control,
+		handleSubmit,
+		formState: { errors },
+	} = useForm({
+		resolver: yupResolver(schema),
+	});
 
 	const handleTransactionsTypeSelect = (type: "up" | "down") => {
 		setTransactionType(type);
@@ -41,6 +57,14 @@ export const Register = () => {
 	};
 
 	const handleSave = handleSubmit((form) => {
+		if (!transactionType) {
+			return Alert.alert("Selecione o tipo de transacao!");
+		}
+
+		if (category.key === "category") {
+			return Alert.alert("Selecione a categoria!");
+		}
+
 		const data = {
 			name: form.name,
 			amount: form.amount,
@@ -52,55 +76,66 @@ export const Register = () => {
 	});
 
 	return (
-		<Container>
-			<Header>
-				<Title>Registo</Title>
-			</Header>
+		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+			<Container>
+				<Header>
+					<Title>Registo</Title>
+				</Header>
 
-			<Form>
-				<Fields>
-					<ControlledInput
-						control={control}
-						name="name"
-						placeholder="Nome"
-					/>
-					<ControlledInput
-						control={control}
-						name="amount"
-						placeholder="Preco"
-					/>
-
-					<TransactionsType>
-						<TransactionTypeButton
-							type="up"
-							title="Income"
-							isActive={transactionType === "up"}
-							onPress={() => handleTransactionsTypeSelect("up")}
+				<Form>
+					<Fields>
+						<ControlledInput
+							control={control}
+							name="name"
+							placeholder="Nome"
+							autoCapitalize="sentences"
+							autoCorrect={false}
+							error={errors.name && errors.name.message}
 						/>
-						<TransactionTypeButton
-							type="down"
-							title="Outcome"
-							isActive={transactionType === "down"}
-							onPress={() => handleTransactionsTypeSelect("down")}
+						<ControlledInput
+							control={control}
+							name="amount"
+							placeholder="Preco"
+							keyboardType="numeric"
+							error={errors.amount && errors.amount.message}
 						/>
-					</TransactionsType>
 
-					<Select
-						onPress={handleOpenCategoryModal}
-						title={category.name}
+						<TransactionsType>
+							<TransactionTypeButton
+								type="up"
+								title="Income"
+								isActive={transactionType === "up"}
+								onPress={() =>
+									handleTransactionsTypeSelect("up")
+								}
+							/>
+							<TransactionTypeButton
+								type="down"
+								title="Outcome"
+								isActive={transactionType === "down"}
+								onPress={() =>
+									handleTransactionsTypeSelect("down")
+								}
+							/>
+						</TransactionsType>
+
+						<Select
+							onPress={handleOpenCategoryModal}
+							title={category.name}
+						/>
+					</Fields>
+
+					<Button title="Guardar" onPress={handleSave} />
+				</Form>
+
+				<Modal visible={categoryModalOpen}>
+					<CategorySelect
+						category={category}
+						setCategory={setCategory}
+						closeSelectCategory={handleCloseCategoryModal}
 					/>
-				</Fields>
-
-				<Button title="Guardar" onPress={handleSave} />
-			</Form>
-
-			<Modal visible={categoryModalOpen}>
-				<CategorySelect
-					category={category}
-					setCategory={setCategory}
-					closeSelectCategory={handleCloseCategoryModal}
-				/>
-			</Modal>
-		</Container>
+				</Modal>
+			</Container>
+		</TouchableWithoutFeedback>
 	);
 };

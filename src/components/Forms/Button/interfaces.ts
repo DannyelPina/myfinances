@@ -1,5 +1,6 @@
-import { TouchableOpacityProps } from "react-native";
+import { RectButtonProps } from "react-native-gesture-handler";
 
-export interface ButtonPropos extends TouchableOpacityProps {
+export interface ButtonPropos extends RectButtonProps {
 	title: string;
+	onPress: () => void;
 }

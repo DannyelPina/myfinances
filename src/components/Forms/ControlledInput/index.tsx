@@ -2,11 +2,12 @@ import React from "react";
 import { Controller } from "react-hook-form";
 import { Input } from "../Input";
 import { ControlledInputProps } from "./interfaces";
-import { Container } from "./styles";
+import { Container, Error } from "./styles";
 
 export const ControlledInput = ({
 	control,
 	name,
+	error,
 	...rest
 }: ControlledInputProps) => {
 	return (
@@ -18,6 +19,7 @@ export const ControlledInput = ({
 				)}
 				name={name}
 			/>
+			{error && <Error>{error}</Error>}
 		</Container>
 	);
 };

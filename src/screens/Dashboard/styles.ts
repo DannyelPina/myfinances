@@ -8,6 +8,7 @@ import {
 } from "react-native-iphone-x-helper";
 
 import { DataListProps } from "./interfaces";
+import { BorderlessButton } from "react-native-gesture-handler";
 
 export const Container = styled.View`
 	flex: 1;
@@ -57,6 +58,8 @@ export const UserName = styled.Text`
 	font-size: ${RFValue(18)}px;
 	font-family: ${({ theme }) => theme.fonts.bold};
 `;
+
+export const LogOutButton = styled(BorderlessButton)``;
 
 export const LogOutIcon = styled(Feather)`
 	color: ${({ theme }) => theme.colors.secundary};

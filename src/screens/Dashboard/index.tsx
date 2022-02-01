@@ -19,6 +19,7 @@ import {
 	Transactions,
 	Title,
 	TransactionsList,
+	LogOutButton,
 } from "./styles";
 
 export const Dashboard = () => {
@@ -65,7 +66,9 @@ export const Dashboard = () => {
 							<UserName>Nataniel</UserName>
 						</User>
 					</UserInfo>
-					<LogOutIcon name="power" />
+					<LogOutButton>
+						<LogOutIcon name="power" />
+					</LogOutButton>
 				</UserWrapper>
 			</Header>
 

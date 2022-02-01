@@ -4,9 +4,9 @@ import { ButtonPropos } from "./interfaces";
 
 import { Container, Title } from "./styles";
 
-export const Button = ({ title, ...rest }: ButtonPropos) => {
+export const Button = ({ title, onPress, ...rest }: ButtonPropos) => {
 	return (
-		<Container {...rest}>
+		<Container onPress={onPress} {...rest}>
 			<Title>{title}</Title>
 		</Container>
 	);
