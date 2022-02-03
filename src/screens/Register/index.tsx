@@ -65,7 +65,6 @@ export const Register = () => {
 		setCategoryModalOpen(true);
 	};
 
-	const dataKey = "@myfinances:transactions";
 	const handleSave = handleSubmit(async (form) => {
 		if (!transactionType) {
 			return Alert.alert("Selecione o tipo de transacao!");
@@ -79,12 +78,13 @@ export const Register = () => {
 			id: String(uuid.v4()),
 			name: form.name,
 			amount: form.amount,
-			transactionType,
+			type: transactionType,
 			category: category.key,
 			date: new Date(),
 		};
 
 		try {
+			const dataKey = "@myfinances:transactions";
 			const data = await AsyncStorage.getItem(dataKey);
 			const currentTransactions = data ? JSON.parse(data) : [];
 			const formatedTransactions = [

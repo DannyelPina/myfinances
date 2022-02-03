@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { HighlightCard } from "../../components/HighlightCard";
 import { TransactionCard } from "../../components/TransactionCard";
@@ -23,33 +24,38 @@ import {
 } from "./styles";
 
 export const Dashboard = () => {
-	const data: DataListProps[] = [
-		{
-			id: "1",
-			type: "positive",
-			title: "Desenvolvimento",
-			amount: "ECV 4.000,00",
-			category: { name: "Venda", icon: "dollar-sign" },
-			date: "23/01/2022",
-		},
+	const [data, setData] = useState<DataListProps[]>([]);
 
-		{
-			id: "2",
-			type: "negative",
-			title: "Desenvolvimento",
-			amount: "ECV 4.000,00",
-			category: { name: "Alimentacao", icon: "coffee" },
-			date: "23/01/2022",
-		},
-		{
-			id: "3",
-			type: "negative",
-			title: "Desenvolvimento",
-			amount: "ECV 4.000,00",
-			category: { name: "Casa", icon: "home" },
-			date: "23/01/2022",
-		},
-	];
+	const loadTransaction = async () => {
+		const dataKey = "@myfinances:transactions";
+
+		const response = await AsyncStorage.getItem(dataKey);
+		const transactions = response ? JSON.parse(response) : [];
+
+		const transactionsFormatted: DataListProps[] = transactions.map(
+			(item: DataListProps) => {
+				const amount = Number(item.amount).toLocaleString("pt-CV", {
+					style: "currency",
+					currency: "ECV",
+				});
+				const dateFormatted = Intl.DateTimeFormat("pt-CV").format(
+					new Date(item.date)
+				);
+
+				return {
+					...item,
+					amount,
+					date: dateFormatted,
+				};
+			}
+		);
+
+		setData(transactionsFormatted);
+	};
+
+	useEffect(() => {
+		loadTransaction();
+	}, []);
 
 	return (
 		<Container>

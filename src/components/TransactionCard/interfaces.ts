@@ -1,20 +1,15 @@
-export interface CategoryProps {
-	name: string;
-	icon: string;
-}
-
 export interface TransactionCardProps {
 	data: DataProps;
 }
 
 export interface TransactionProps {
-	type: "positive" | "negative";
+	type: "up" | "down";
 }
 
 export interface DataProps {
-	type: "positive" | "negative";
-	title: string;
+	type: "up" | "down";
+	name: string;
 	amount: string;
-	category: CategoryProps;
+	category: string;
 	date: string;
 }

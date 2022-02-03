@@ -1,4 +1,5 @@
 import React from "react";
+import { categories } from "../../utils/categories";
 
 import { TransactionCardProps } from "./interfaces";
 
@@ -14,17 +15,18 @@ import {
 } from "./styles";
 
 export const TransactionCard = ({ data }: TransactionCardProps) => {
+	const category = categories.find((item) => (item.key = data.category));
 	return (
 		<Container>
-			<Title>{data.title}</Title>
+			<Title>{data.name}</Title>
 			<Amount type={data.type}>
-				{data.type === "negative" && "- "}
+				{data.type === "down" && "- "}
 				{data.amount}
 			</Amount>
 			<Footer>
 				<Category>
-					<Icon name={data.category.icon}></Icon>
-					<CategoryName>{data.category.name}</CategoryName>
+					<Icon name={category?.icon}></Icon>
+					<CategoryName>{category?.name}</CategoryName>
 				</Category>
 				<Date>{data.date}</Date>
 			</Footer>
