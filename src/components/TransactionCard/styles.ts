@@ -19,7 +19,7 @@ export const Title = styled.Text`
 
 export const Amount = styled.Text<TransactionProps>`
 	color: ${({ theme, type }) =>
-		type === "positive" ? theme.colors.sucess : theme.colors.attention};
+		type === "up" ? theme.colors.sucess : theme.colors.attention};
 	font-size: ${RFValue(20)}px;
 	font-family: ${({ theme }) => theme.fonts.regular};
 	margin-top: ${RFValue(2)}px;

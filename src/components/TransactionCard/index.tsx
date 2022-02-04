@@ -15,7 +15,7 @@ import {
 } from "./styles";
 
 export const TransactionCard = ({ data }: TransactionCardProps) => {
-	const category = categories.find((item) => (item.key = data.category));
+	const [category] = categories.filter((item) => item.key === data.category);
 	return (
 		<Container>
 			<Title>{data.name}</Title>

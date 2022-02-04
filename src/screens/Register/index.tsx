@@ -53,6 +53,10 @@ export const Register = () => {
 		resolver: yupResolver(schema),
 	});
 
+	const handleSetCategory = (item: CategoryProps) => {
+		setCategory(item);
+	};
+
 	const handleTransactionsTypeSelect = (type: "up" | "down") => {
 		setTransactionType(type);
 	};
@@ -158,7 +162,7 @@ export const Register = () => {
 			<Modal visible={categoryModalOpen}>
 				<CategorySelect
 					category={category}
-					setCategory={setCategory}
+					setCategory={handleSetCategory}
 					closeSelectCategory={handleCloseCategoryModal}
 				/>
 			</Modal>
