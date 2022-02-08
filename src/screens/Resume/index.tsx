@@ -2,12 +2,21 @@ import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { VictoryPie } from "victory-native";
 import { HistoryCard } from "../../components/HistoryCard";
-import { Container, Header, Title, TotalByCategoriesList } from "./styles";
+import {
+	ChartConatiner,
+	Container,
+	Header,
+	Title,
+	TotalByCategoriesList,
+} from "./styles";
 import { DataListProps } from "../Dashboard/interfaces";
 import { categories } from "../../utils/categories";
 import { TotalCategoprySumProps } from "./interfaces";
+import { RFValue } from "react-native-responsive-fontsize";
+import { useTheme } from "styled-components";
 
 export const Resume = () => {
+	const theme = useTheme();
 	const [totalByCategories, setTotalByCategories] = useState<
 		TotalCategoprySumProps[]
 	>([]);
@@ -19,15 +28,22 @@ export const Resume = () => {
 			? JSON.parse(response)
 			: [];
 
-		const outCome = responseFormatted.filter(
+		const outComes = responseFormatted.filter(
 			(transaction) => transaction.type === "down"
+		);
+
+		const outComeTotal = outComes.reduce(
+			(acumullator: number, outcome: DataListProps) => {
+				return acumullator + Number(outcome.amount);
+			},
+			0
 		);
 
 		const totalCategory: TotalCategoprySumProps[] = [];
 		categories.forEach((category) => {
 			let categorySum = 0;
 
-			outCome.forEach((item) => {
+			outComes.forEach((item) => {
 				if (item.category === category.key) {
 					categorySum += Number(item.amount);
 				}
@@ -38,11 +54,17 @@ export const Resume = () => {
 					style: "currency",
 					currency: "ECV",
 				});
+
+				const percentage = `${(
+					(categorySum / outComeTotal) *
+					100
+				).toFixed(0)}%`;
 				totalCategory.push({
 					id: category.key,
 					color: category.color,
 					name: category.name,
 					total,
+					percent: percentage,
 				});
 			}
 		});
@@ -65,14 +87,30 @@ export const Resume = () => {
 				data={totalByCategories}
 				keyExtractor={(item) => item.id}
 				ListHeaderComponent={
-					<VictoryPie
-						data={[
-							{ x: "Cats", y: 35 },
-							{ x: "Dogs", y: 40 },
-							{ x: "Birds", y: 55 },
-						]}
-					/>
+					<ChartConatiner>
+						<VictoryPie
+							data={totalByCategories}
+							colorScale={totalByCategories.map(
+								(category) => category.color
+							)}
+							style={{
+								labels: {
+									fontSize: RFValue(18),
+									fontWeight: "bold",
+									fill: theme.colors.shape,
+								},
+							}}
+							labelRadius={60}
+							x="percent"
+							y="total"
+						/>
+					</ChartConatiner>
 				}
+				ListHeaderComponentStyle={{
+					width: "100%",
+					justifyContent: "center",
+					alignItems: "center",
+				}}
 				renderItem={({ item }) => (
 					<HistoryCard
 						title={item.name}

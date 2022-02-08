@@ -3,4 +3,5 @@ export interface TotalCategoprySumProps {
 	color: string;
 	name: string;
 	total: string;
+	percent: string;
 }

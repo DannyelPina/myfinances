@@ -40,3 +40,9 @@ export const TotalByCategoriesList = styled(
 		paddingBottom: Platform.OS === "ios" ? getBottomSpace() : RFValue(8),
 	},
 })``;
+
+export const ChartConatiner = styled.View`
+	width: 100%;
+	justify-content: center;
+	align-items: center;
+`;
