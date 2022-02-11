@@ -35,9 +35,6 @@ export const Dashboard = () => {
 
 	const theme = useTheme();
 
-	let inComeSum = 0;
-	let outComeSum = 0;
-
 	const getLastTransactionDate = (
 		transactions: DataListProps[],
 		type: "up" | "down"
@@ -64,6 +61,8 @@ export const Dashboard = () => {
 			? JSON.parse(response)
 			: [];
 
+		let inComeSum = 0;
+		let outComeSum = 0;
 		const transactionsFormatted: DataListProps[] = transactions.map(
 			(item: DataListProps) => {
 				if (item.type === "up") {

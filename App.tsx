@@ -18,6 +18,9 @@ import Theme from "./src/global/styles/theme";
 import { AppRoutes } from "./src/routes/app.routes";
 import { StatusBar } from "react-native";
 
+import { SignIn } from "./src/screens/SignIn";
+import { AuthProvider } from "./src/hooks/auth";
+
 export default function App() {
 	const [fontsLoaded] = useFonts({
 		Poppins_400Regular,
@@ -36,7 +39,10 @@ export default function App() {
 					translucent
 				/>
 				<NavigationContainer>
-					<AppRoutes />
+					<AuthProvider>
+						<SignIn />
+					</AuthProvider>
+					{/* <AppRoutes /> */}
 				</NavigationContainer>
 			</ThemeProvider>
 		);
