@@ -26,6 +26,7 @@ import {
 	Title,
 	TransactionsType,
 } from "./styles";
+import { useAuth } from "../../hooks/auth";
 
 const schema = Yup.object().shape({
 	name: Yup.string().required("Nome obrigatorio"),
@@ -43,6 +44,8 @@ export const Register = () => {
 	} as CategoryProps);
 	const [transactionType, setTransactionType] = useState("");
 	const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+
+	const { user } = useAuth();
 
 	const {
 		control,
@@ -88,7 +91,7 @@ export const Register = () => {
 		};
 
 		try {
-			const dataKey = "@myfinances:transactions";
+			const dataKey = `@myfinances:transactions_user:${user.id}`;
 			const data = await AsyncStorage.getItem(dataKey);
 			const currentTransactions = data ? JSON.parse(data) : [];
 			const formatedTransactions = [

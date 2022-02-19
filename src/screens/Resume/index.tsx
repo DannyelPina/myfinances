@@ -22,6 +22,7 @@ import { addMonths, subMonths, format } from "date-fns";
 import { pt } from "date-fns/locale";
 import { ActivityIndicator } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { useAuth } from "../../hooks/auth";
 
 export const Resume = () => {
 	const theme = useTheme();
@@ -30,6 +31,7 @@ export const Resume = () => {
 	const [totalByCategories, setTotalByCategories] = useState<
 		TotalCategoprySumProps[]
 	>([]);
+	const { user } = useAuth();
 
 	const handleDateChange = (action: "next" | "prev") => {
 		if (action === "next") {
@@ -42,7 +44,7 @@ export const Resume = () => {
 	};
 	const loadData = async () => {
 		setLoading(true);
-		const dataKey = "@myfinances:transactions";
+		const dataKey = `@myfinances:transactions_user:${user.id}`;
 
 		const response = await AsyncStorage.getItem(dataKey);
 		const responseFormatted: DataListProps[] = response

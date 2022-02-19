@@ -26,6 +26,7 @@ import {
 	LogOutButton,
 	LoadingContainer,
 } from "./styles";
+import { useAuth } from "../../hooks/auth";
 
 export const Dashboard = () => {
 	const [isLoading, setIsLoading] = useState(true);
@@ -34,27 +35,34 @@ export const Dashboard = () => {
 		useState<HighlightCardDataProps>({} as HighlightCardDataProps);
 
 	const theme = useTheme();
+	const { signOut, user } = useAuth();
 
 	const getLastTransactionDate = (
 		transactions: DataListProps[],
 		type: "up" | "down"
 	) => {
+		const transactionsFiltered = transactions.filter(
+			(item) => item.type === type
+		);
+		if (!transactionsFiltered.length) {
+			return 0;
+		}
 		const lastTransactionDate = new Date(
 			Math.max.apply(
 				Math,
-				transactions
-					.filter((item) => item.type === type)
-					.map((item) => new Date(item.date).getTime())
+				transactionsFiltered.map((item) =>
+					new Date(item.date).getTime()
+				)
 			)
 		);
-		return `${lastTransactionDate.getDay()} de ${lastTransactionDate.toLocaleString(
+		return `${lastTransactionDate.getDate()} de ${lastTransactionDate.toLocaleString(
 			"pt-CV",
 			{ month: "long" }
 		)}`;
 	};
 
 	const loadTransaction = async () => {
-		const dataKey = "@myfinances:transactions";
+		const dataKey = `@myfinances:transactions_user:${user.id}`;
 
 		const response = await AsyncStorage.getItem(dataKey);
 		const transactions: DataListProps[] = response
@@ -95,7 +103,9 @@ export const Dashboard = () => {
 			transactions,
 			"down"
 		);
-		const totalInterval = `01 a ${lastOutComeTransaction}`;
+		const totalInterval = lastOutComeTransaction
+			? `01 a ${lastOutComeTransaction}`
+			: "Nenhuma transacao";
 
 		const total = inComeSum - outComeSum;
 		setHighlightCardData({
@@ -104,14 +114,18 @@ export const Dashboard = () => {
 					style: "currency",
 					currency: "ECV",
 				}),
-				lastTransaction: `Ultima entrada em ${lastInComeTransaction}`,
+				lastTransaction: lastInComeTransaction
+					? `Ultima entrada em ${lastInComeTransaction}`
+					: "Nenhuma entrada",
 			},
 			outComeSum: {
 				amount: outComeSum.toLocaleString("pt-CV", {
 					style: "currency",
 					currency: "ECV",
 				}),
-				lastTransaction: `Ultima entrada em ${lastOutComeTransaction}`,
+				lastTransaction: lastOutComeTransaction
+					? `Ultima saida em ${lastOutComeTransaction}`
+					: "Nenhuma saida",
 			},
 			total: {
 				amount: total.toLocaleString("pt-CV", {
@@ -138,15 +152,15 @@ export const Dashboard = () => {
 					<UserInfo>
 						<Photo
 							source={{
-								uri: "https://avatars.githubusercontent.com/u/25164242?v=4",
+								uri: user.photo,
 							}}
 						/>
 						<User>
 							<UserGreeting>Ola,</UserGreeting>
-							<UserName>Nataniel</UserName>
+							<UserName>{user.name}</UserName>
 						</User>
 					</UserInfo>
-					<LogOutButton>
+					<LogOutButton onPress={signOut}>
 						<LogOutIcon name="power" />
 					</LogOutButton>
 				</UserWrapper>
@@ -172,7 +186,7 @@ export const Dashboard = () => {
 							title="Saida"
 							amount={highlightCardData?.outComeSum?.amount}
 							lastTransation={
-								highlightCardData?.inComeSum?.lastTransaction
+								highlightCardData?.outComeSum?.lastTransaction
 							}
 						/>
 						<HighlightCard

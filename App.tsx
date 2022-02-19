@@ -20,6 +20,8 @@ import { StatusBar } from "react-native";
 
 import { SignIn } from "./src/screens/SignIn";
 import { AuthProvider } from "./src/hooks/auth";
+import { Routes } from "./src/routes";
+import { useAuth } from "./src/hooks/auth";
 
 export default function App() {
 	const [fontsLoaded] = useFonts({
@@ -28,7 +30,9 @@ export default function App() {
 		Poppins_700Bold,
 	});
 
-	if (!fontsLoaded) {
+	const { userStoredLoading } = useAuth();
+
+	if (!fontsLoaded || userStoredLoading) {
 		return <AppLoading />;
 	} else {
 		return (
@@ -38,12 +42,9 @@ export default function App() {
 					barStyle="light-content"
 					translucent
 				/>
-				<NavigationContainer>
-					<AuthProvider>
-						<SignIn />
-					</AuthProvider>
-					{/* <AppRoutes /> */}
-				</NavigationContainer>
+				<AuthProvider>
+					<Routes />
+				</AuthProvider>
 			</ThemeProvider>
 		);
 	}

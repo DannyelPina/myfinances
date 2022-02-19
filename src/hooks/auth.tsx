@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+	createContext,
+	ReactNode,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
 
 const { CLIENT_ID } = process.env;
 const { REDIRECT_URI } = process.env;
@@ -20,8 +26,10 @@ interface IUser {
 
 interface IAuthContextData {
 	user: IUser;
+	userStoredLoading: boolean;
 	signInWithGoogle(): Promise<void>;
 	signInWithApple(): Promise<void>;
+	signOut(): Promise<void>;
 }
 
 interface AuthorizationResponseProps {
@@ -35,6 +43,7 @@ const AuthContext = createContext({} as IAuthContextData);
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
 	const [user, setUser] = useState<IUser>({} as IUser);
+	const [userStoredLoading, setUserStoredLoading] = useState(true);
 
 	async function signInWithGoogle() {
 		try {
@@ -52,15 +61,16 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 					`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${params.access_token}`
 				);
 				const userInfo = await response.json();
-				setUser({
+				const userLogged = {
 					id: userInfo.id,
 					email: userInfo.email,
 					name: userInfo.given_name,
 					photo: userInfo.picture,
-				});
+				};
+				setUser(userLogged);
 				await AsyncStorage.setItem(
 					"@myfinances:user",
-					JSON.stringify(userInfo)
+					JSON.stringify(userLogged)
 				);
 			}
 		} catch (error: any) {
@@ -78,11 +88,13 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 			});
 
 			if (credentials) {
+				const name = credentials.fullName!.givenName!;
+				const photo = `https://ui-avatars.com/api/?name=${name}&length=1`;
 				const userLogged = {
 					id: credentials.user,
 					email: credentials.email!,
-					name: credentials.fullName!.givenName!,
-					photo: undefined,
+					name,
+					photo,
 				};
 
 				setUser(userLogged);
@@ -95,9 +107,36 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 			throw new Error(error);
 		}
 	}
+
+	async function signOut() {
+		setUser({} as IUser);
+		await AsyncStorage.removeItem("@myfinances:user");
+	}
+
+	useEffect(() => {
+		async function loadUserStoredData() {
+			const userStored = await AsyncStorage.getItem("@myfinances:user");
+
+			if (userStored) {
+				const userLogged = JSON.parse(userStored) as IUser;
+
+				setUser(userLogged);
+			}
+			setUserStoredLoading(false);
+		}
+
+		loadUserStoredData();
+	}, []);
+
 	return (
 		<AuthContext.Provider
-			value={{ user, signInWithGoogle, signInWithApple }}
+			value={{
+				user,
+				signInWithGoogle,
+				signInWithApple,
+				signOut,
+				userStoredLoading,
+			}}
 		>
 			{children}
 		</AuthContext.Provider>
