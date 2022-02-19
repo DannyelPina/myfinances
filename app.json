@@ -1,10 +1,24 @@
 {
 	"expo": {
 		"name": "myfinances",
+        "icon": "./assets/icon.png",
 		"slug": "myfinances",
 		"scheme": "myfinances",
 		"version": "1.0.0",
-		"assetBundlePatterns": ["**/*"]
+		"assetBundlePatterns": ["**/*"],
+        "ios": {
+            "bundleIdentifier": "com.myfinances",
+            "buildNumber": "1.0.0"
+        },
+        "android": {
+            "package": "com.myfinances",
+            "versionCode": 1,
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#5636D3"
+            }
+        }
 	},
-	"name": "myfinances"
+	"name": "myfinances",	
+    "displayName": "myfinances"
 }
